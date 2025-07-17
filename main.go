@@ -43,10 +43,22 @@ func ping(ctx context.Context, addr string) (bool, error) {
 // poweroff runs systemctl poweroff
 func poweroff() error {
 	log.Println("[!] Poweroff triggered")
-	cmd := exec.Command("systemctl", "poweroff")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+
+	// Update NUT server status
+	log.Println("[*] Updating NUT server status: OB LB, battery.charge=1")
+	nutCmd := exec.Command("bash", "-c", `echo -e "battery.charge: 1\nups.status: OB LB" | sudo tee /etc/nut/dummy.status`)
+	nutCmd.Stdout = os.Stdout
+	nutCmd.Stderr = os.Stderr
+	if err := nutCmd.Run(); err != nil {
+		log.Printf("[!] NUT status update failed: %v", err)
+	}
+
+	// Power off system
+	log.Println("[*] Running systemctl poweroff")
+	poweroffCmd := exec.Command("systemctl", "poweroff")
+	poweroffCmd.Stdout = os.Stdout
+	poweroffCmd.Stderr = os.Stderr
+	return poweroffCmd.Run()
 }
 
 // monitor checks router, powers off if unreachable for timeoutSec
