@@ -14,7 +14,7 @@ fpm \
   -s dir \
   -t deb \
   -n poweroutg-mon \
-  -v 1.0.1 \
+  -v 1.0.2 \
   --description "Power Outage Connectivity Monitor Agent" \
   --url "https://github.com/your-org/your-repo" \
   --maintainer "dat <trduydat@gmail.com>" \

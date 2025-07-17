@@ -53,6 +53,11 @@ func poweroff() error {
 		log.Printf("[!] NUT status update failed: %v", err)
 	}
 
+	// Wait before poweroff (configurable via env)
+	delaySec := getenvInt("POWEROFF_DELAY", 60)
+	log.Printf("[*] Waiting %d seconds before poweroff...", delaySec)
+	time.Sleep(time.Duration(delaySec) * time.Second)
+
 	// Power off system
 	log.Println("[*] Running systemctl poweroff")
 	poweroffCmd := exec.Command("systemctl", "poweroff")
